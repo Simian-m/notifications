@@ -12,14 +12,9 @@ class NotificationSubscription extends Model
 
     protected $fillable = ['employee_id', 'type', 'entity_id'];
 
-    /**
-     * Override this method in the consuming application to return the correct employee model.
-     */
-    public static string $employeeModel = 'App\\Models\\Employee';
-
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(static::$employeeModel, 'employee_id');
+        return $this->belongsTo(config('notifications.employee_model'), 'employee_id');
     }
 
     /**
@@ -41,6 +36,8 @@ class NotificationSubscription extends Model
             return new Collection;
         }
 
-        return (static::$employeeModel)::whereIn('id', $employeeIds)->get();
+        $employeeModel = config('notifications.employee_model');
+
+        return $employeeModel::whereIn('id', $employeeIds)->get();
     }
 }
