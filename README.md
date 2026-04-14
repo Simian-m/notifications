@@ -8,13 +8,7 @@ Subscription-based notification broker for Laravel. Employees subscribe to notif
 composer require simianbv/notifications
 ```
 
-The service provider is auto-discovered. Run the migration:
-
-```bash
-php artisan migrate
-```
-
-Or publish it first if you want to customize:
+The service provider is auto-discovered. Publish and run the migration:
 
 ```bash
 php artisan vendor:publish --tag=notifications-migrations
@@ -94,21 +88,23 @@ Without resolvers or explicit arguments, the default message is `"{Type} #{id} i
 
 The routes use the middleware and prefix from the config.
 
-| Method   | URI                                             | Description                       |
-|----------|-------------------------------------------------|-----------------------------------|
-| `GET`    | `/subscriptions/{type}/{entityId?}`             | List current user's subscriptions |
-| `POST`   | `/subscriptions/{type}/{entityId?}`             | Subscribe current user            |
-| `DELETE` | `/subscriptions/{type}/{entityId?}`             | Unsubscribe current user          |
-| `GET`    | `/subscriptions/{type}/{entityId?}/subscribers` | List all subscribers              |
+| Method   | URI                                             | Description                                      |
+|----------|-------------------------------------------------|--------------------------------------------------|
+| `GET`    | `/subscriptions`                                | List all current user's subscriptions by type     |
+| `GET`    | `/subscriptions/{type}/{entityId?}`             | List current user's subscriptions for a type      |
+| `POST`   | `/subscriptions/{type}/{entityId?}`             | Subscribe current user                            |
+| `DELETE` | `/subscriptions/{type}/{entityId?}`             | Unsubscribe current user                          |
+| `GET`    | `/subscriptions/{type}/{entityId?}/subscribers` | List all subscribers                              |
 
 ### Examples
 
 ```
+GET    /subscriptions                 → list all my subscriptions grouped by type
+GET    /subscriptions/Refund          → list my refund subscriptions
 POST   /subscriptions/Refund          → subscribe to all refunds
 POST   /subscriptions/Refund/42       → subscribe to refund #42
 DELETE /subscriptions/Refund           → unsubscribe from all refunds
 DELETE /subscriptions/Refund/42        → unsubscribe from refund #42
-GET    /subscriptions/Refund           → list my refund subscriptions
 GET    /subscriptions/Refund/42/subscribers → who is subscribed to refund #42
 ```
 
