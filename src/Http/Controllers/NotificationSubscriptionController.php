@@ -10,6 +10,20 @@ use Simianbv\Notifications\Models\NotificationSubscription;
 
 class NotificationSubscriptionController extends Controller
 {
+    public function me(): JsonResponse
+    {
+        try {
+            $subscriptions = NotificationSubscription::where('employee_id', Auth::user()->getKey())
+                ->orderBy('type')
+                ->get()
+                ->groupBy('type');
+
+            return response()->json(['data' => $subscriptions]);
+        } catch (Exception) {
+            return response()->json(['data' => []]);
+        }
+    }
+
     public function index(string $type, ?int $entityId = null): JsonResponse
     {
         try {
@@ -18,6 +32,8 @@ class NotificationSubscriptionController extends Controller
 
             if ($entityId) {
                 $query->where('entity_id', $entityId);
+            } else {
+                $query->whereNull('entity_id');
             }
 
             return response()->json(['data' => $query->get()]);
