@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'middleware' => ['api'],
+    'middleware' => ['api', 'introspect'],
 
     'route_prefix' => '',
 
