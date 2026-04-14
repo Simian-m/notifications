@@ -1,5 +1,5 @@
 {
-  "name": "simianbv/notification-broker",
+  "name": "simianbv/notifications",
   "description": "Subscription-based notification broker for Laravel",
   "type": "library",
   "keywords": [
