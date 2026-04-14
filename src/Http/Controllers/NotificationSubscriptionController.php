@@ -2,6 +2,7 @@
 
 namespace Simianbv\Notifications\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -11,47 +12,63 @@ class NotificationSubscriptionController extends Controller
 {
     public function index(string $type, ?int $entityId = null): JsonResponse
     {
-        $query = NotificationSubscription::where('employee_id', Auth::user()->getKey())
-            ->where('type', $type);
+        try {
+            $query = NotificationSubscription::where('employee_id', Auth::user()->getKey())
+                ->where('type', $type);
 
-        if ($entityId) {
-            $query->where('entity_id', $entityId);
+            if ($entityId) {
+                $query->where('entity_id', $entityId);
+            }
+
+            return response()->json(['data' => $query->get()]);
+        } catch (Exception) {
+            return response()->json(['data' => []]);
         }
-
-        return response()->json(['data' => $query->get()]);
     }
 
     public function store(string $type, ?int $entityId = null): JsonResponse
     {
-        $subscription = NotificationSubscription::firstOrCreate([
-            'employee_id' => Auth::user()->getKey(),
-            'type' => $type,
-            'entity_id' => $entityId,
-        ]);
+        try {
+            $subscription = NotificationSubscription::firstOrCreate([
+                'employee_id' => Auth::user()->getKey(),
+                'type' => $type,
+                'entity_id' => $entityId,
+            ]);
 
-        return response()->json(['message' => 'Abonnement aangemaakt.', 'subscription' => $subscription], 201);
+            return response()->json(['message' => 'Abonnement aangemaakt.', 'subscription' => $subscription], 201);
+        } catch (Exception) {
+            return response()->json(['data' => []]);
+        }
     }
 
     public function destroy(string $type, ?int $entityId = null): JsonResponse
     {
-        $query = NotificationSubscription::where('employee_id', Auth::user()->getKey())
-            ->where('type', $type);
+        try {
+            $query = NotificationSubscription::where('employee_id', Auth::user()->getKey())
+                ->where('type', $type);
 
-        if ($entityId) {
-            $query->where('entity_id', $entityId);
-        } else {
-            $query->whereNull('entity_id');
+            if ($entityId) {
+                $query->where('entity_id', $entityId);
+            } else {
+                $query->whereNull('entity_id');
+            }
+
+            $query->delete();
+
+            return response()->json(['message' => 'Abonnement verwijderd.']);
+        } catch (Exception) {
+            return response()->json(['data' => []]);
         }
-
-        $query->delete();
-
-        return response()->json(['message' => 'Abonnement verwijderd.']);
     }
 
     public function subscribers(string $type, ?int $entityId = null): JsonResponse
     {
-        $subscribers = NotificationSubscription::subscribers($type, $entityId);
+        try {
+            $subscribers = NotificationSubscription::subscribers($type, $entityId);
 
-        return response()->json(['data' => $subscribers]);
+            return response()->json(['data' => $subscribers]);
+        } catch (Exception) {
+            return response()->json(['data' => []]);
+        }
     }
 }
